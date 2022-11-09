@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <uxa_sam_msgs/std_position_move.h>
+#include <uxa_sam_msg/position_move.h>
 #include <uxa_uic_msgs/motion.h>
 #include <uxa_uic_msgs/remocon.h>
 
@@ -108,7 +109,7 @@ void send_std_position(unsigned char ID ,unsigned int POS)
 void send_position(unsigned char ID, unsigned char TORQLEVEL, unsigned char POS)
 {
     sam_pos_move_msg.id = ID;
-    sam_pos_move_mss.torqlevel = TORQLEVEL;
+    sam_pos_move_msg.torqlevel = TORQLEVEL;
     sam_pos_move_msg.pos = POS;
     pos_move_pub.publish(sam_pos_move_msg);
 }
