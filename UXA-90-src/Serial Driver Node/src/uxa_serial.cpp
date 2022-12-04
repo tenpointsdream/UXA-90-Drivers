@@ -13,6 +13,8 @@ int main(int argc, char **argv)
 
     ros::Rate loop_rate(1000);
 
+    msg_buf = (char*) malloc(_MSG_BUFF_SIZE )
+    
     if((Serial = Init_Serial(_SERIAL_PORT)) != -1)
     {
         unsigned char Trans_chr[_SERIAL_BUFF_SIZE];
@@ -58,7 +60,7 @@ int main(int argc, char **argv)
 
         uxa_serial_msgs::receive msg;
 
-
+        
         while(ros::ok())
         {
             loop_rate.sleep();
@@ -74,6 +76,7 @@ int main(int argc, char **argv)
 
     cout << endl;
     cout << "SERIAL : " << Serial << " Device close." << endl;
+    delete msg_buf;
     close(Serial);
     cout << "SERIAL : " << "uxa_serial node terminate." << endl;
     return 0;
@@ -181,7 +184,6 @@ int Read_Serial_Char(int Serial, unsigned char *Recei_chr)
 {
     if(read(Serial, Recei_chr, 1) > 0)
         return 1;
-
     return -1;
 }
 
@@ -189,8 +191,6 @@ int Read_Serial_Char(int Serial, unsigned char *Recei_chr)
 void rev_func(const uxa_serial_msgs::transmit::ConstPtr &msg)
 {
     ROS_INFO("receive msg : 0x%x",msg->tx_data);
-    unsigned char msg_buf[1];
-    *msg_buf = msg->tx_data;
+    msg_buf[0] = msg->tx_data;
     Send_Serial_Char(Serial, msg_buf);
-    delete msg_buf;
 }

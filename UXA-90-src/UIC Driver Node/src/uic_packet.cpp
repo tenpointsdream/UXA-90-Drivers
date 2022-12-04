@@ -57,8 +57,10 @@ void UIC_MOTION_FUNC(const uxa_uic_msgs::motion::ConstPtr &msg)
 
     else if(msg->motion_name.compare("stop")==0)
         UIC_send_pc_control_remote(BTN_C);
-    else if (msg->motion_name.compare("sit_down")==)
-        UIC_send_pc_control_remote(BTN_0);s
+
+    else if (msg->motion_name.compare("sit_down")==0)
+        UIC_send_pc_control_remote(BTN_0);
+
     else if(msg->motion_name.compare("pc_control")==0)
         PC_control();
 
@@ -70,10 +72,11 @@ void UIC_MOTION_FUNC(const uxa_uic_msgs::motion::ConstPtr &msg)
 void Init_Message()
 {
     ros::NodeHandle n;
-
+    
     uxa_serial_pub = n.advertise<uxa_serial_msgs::transmit>("uxa_serial_subscriber", _MSG_BUFF_SIZE);
 
     uic_driver_remocon_sub = n.subscribe<uxa_uic_msgs::remocon>("uic_driver_remocon", _MSG_BUFF_SIZE, UIC_REMOCON_FUNC);
+    
     uic_driver_motion_sub = n.subscribe<uxa_uic_msgs::motion>("uic_driver_motion", _MSG_BUFF_SIZE, UIC_MOTION_FUNC);
 
 }
@@ -102,7 +105,7 @@ void UIC_send_remote(unsigned char remote)
 void UIC_send_pc_control_remote(unsigned char remote)
 {
     Send_pc_buf[4] = remote;
-    Send_pc_buf[5] = (0xFF^0xE0^0xE1^remote) & 0x7F;
+    Send_pc_buf[5] = (Send_pc_buf[1]^Send_pc_buf[2]^Send_pc_buf[3]^Send_pc_buf[4]) & 0x7F;
 
     Message_sender(Send_pc_buf, 6);
 }
